@@ -39,6 +39,9 @@ Script PowerShell para criar usuários administradores locais no Windows e envia
    ```
 4. **Se necessário, ajuste a política de execução (ver Solução de Problemas)**
 5. **Siga as instruções na tela**
+   - Informe o número para o usuário (ex: 001, 123)
+   - Informe o nome do funcionário que está usando o PC
+   - Após o email ser enviado, escolha se quer alterar sua conta para Padrão
 
 ## 🔧 Solução de Problemas
 
@@ -75,6 +78,29 @@ Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
 ### ❌ Erro: "O usuário já existe"
 
 **Solução:** O usuário com esse número já foi criado anteriormente. Use um número diferente.
+
+## ⚙️ Funcionalidades do Script
+
+### 🔄 Alteração de Tipo de Conta
+
+Após criar o usuário administrador e enviar o email, o script oferece uma opção adicional:
+
+**Pergunta:** "Deseja alterar a conta atual de Administrador para Padrão?"
+
+- ✅ **Se responder S**: A conta atual será alterada de Administrador para Padrão
+- ❌ **Se responder N**: A conta atual permanece como Administrador
+- ℹ️ **Se a conta já for Padrão**: Mostra mensagem informativa
+
+**Benefícios:**
+
+- Melhora a segurança do sistema (princípio do menor privilégio)
+- Evita o uso desnecessário de contas administrativas no dia a dia
+- Automatiza processo que seria feito manualmente no Painel de Controle
+
+**Processo manual equivalente:**
+`Painel de Controle → Contas de Usuário → Gerenciar Contas → Alterar uma conta → Alterar Tipo de Conta`
+
+> ⚠️ **Importante**: A alteração de tipo de conta terá efeito após fazer logout/login
 
 ## 🔒 Segurança
 

@@ -167,6 +167,46 @@ Guarde esta senha em um local seguro.
     Write-Host "Assunto do e-mail: '$emailAssunto'"
     Write-Host "--------------------------------------------------" -ForegroundColor Yellow
 
+    # --- OPCAO PARA ALTERAR CONTA ATUAL PARA PADRAO ---
+    Write-Host ""
+    Write-Host "==========================================" -ForegroundColor Cyan
+    Write-Host "OPCAO: Alterar conta atual para Padrao" -ForegroundColor Cyan
+    Write-Host "==========================================" -ForegroundColor Cyan
+    
+    # Obtem o usuario atual
+    $usuarioAtual = $env:USERNAME
+    Write-Host "Usuario atual: $usuarioAtual" -ForegroundColor White
+    
+    # Verifica se o usuario atual e administrador
+    try {
+        $isCurrentUserAdmin = (Get-LocalGroupMember -Group "Administradores" | Where-Object { $_.Name -like "*$usuarioAtual" }) -ne $null
+        
+        if ($isCurrentUserAdmin) {
+            Write-Host "Tipo atual: Administrador" -ForegroundColor Yellow
+            Write-Host ""
+            $resposta = Read-Host "Deseja alterar a conta '$usuarioAtual' de Administrador para Padrao? (S/N)"
+            
+            if ($resposta -match "^[SsYy]") {
+                try {
+                    Remove-LocalGroupMember -Group "Administradores" -Member $usuarioAtual
+                    Write-Host "SUCESSO: Conta '$usuarioAtual' alterada para tipo Padrao!" -ForegroundColor Green
+                    Write-Host "IMPORTANTE: Esta alteracao tera efeito apos fazer logout/login." -ForegroundColor Yellow
+                } catch {
+                    Write-Host "ERRO ao alterar tipo de conta: $($_.Exception.Message)" -ForegroundColor Red
+                }
+            } else {
+                Write-Host "Tipo de conta nao alterado." -ForegroundColor White
+            }
+        } else {
+            Write-Host "Tipo atual: Padrao" -ForegroundColor Green
+            Write-Host "A conta '$usuarioAtual' ja e uma conta Padrao." -ForegroundColor White
+        }
+    } catch {
+        Write-Host "ERRO ao verificar tipo de conta: $($_.Exception.Message)" -ForegroundColor Red
+    }
+    
+    Write-Host "==========================================" -ForegroundColor Cyan
+
 } catch {
     # Captura e exibe erros
     Write-Host "--------------------------------------------------" -ForegroundColor Red
