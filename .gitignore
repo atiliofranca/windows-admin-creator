@@ -1,0 +1,9 @@
+# Arquivo de configuração com informações sensíveis
+.env
+
+# Logs
+*.log
+
+# Arquivos temporários
+*.tmp
+*.bak
