@@ -2,6 +2,76 @@
 
 # Script para criar um novo usuario administrador e enviar a senha por e-mail.
 
+# --- VERIFICACAO DE POLITICA DE EXECUCAO ---
+function Check-ExecutionPolicy {
+    $currentPolicy = Get-ExecutionPolicy
+    $restrictivePolicies = @("Restricted", "AllSigned")
+    
+    if ($currentPolicy -in $restrictivePolicies) {
+        Write-Host "==========================================" -ForegroundColor Yellow
+        Write-Host "AVISO: Politica de Execucao Restritiva" -ForegroundColor Red
+        Write-Host "==========================================" -ForegroundColor Yellow
+        Write-Host "Politica atual: $currentPolicy" -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "Para executar este script, execute o comando abaixo:" -ForegroundColor White
+        Write-Host "Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process" -ForegroundColor Green
+        Write-Host ""
+        Write-Host "Este comando:" -ForegroundColor White
+        Write-Host "- Afeta APENAS esta sessao do PowerShell" -ForegroundColor White
+        Write-Host "- E temporario e seguro" -ForegroundColor White
+        Write-Host "- Volta ao normal quando fechar o PowerShell" -ForegroundColor White
+        Write-Host "==========================================" -ForegroundColor Yellow
+        
+        $resposta = Read-Host "Deseja que eu tente alterar automaticamente? (S/N)"
+        if ($resposta -match "^[SsYy]") {
+            try {
+                Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process -Force
+                Write-Host "Politica alterada com sucesso!" -ForegroundColor Green
+                Write-Host "Continuando execucao do script..." -ForegroundColor Green
+                Start-Sleep -Seconds 2
+            } catch {
+                Write-Host "Erro ao alterar politica: $($_.Exception.Message)" -ForegroundColor Red
+                Write-Host "Execute manualmente o comando mostrado acima." -ForegroundColor Yellow
+                Read-Host "Pressione Enter para sair"
+                exit
+            }
+        } else {
+            Write-Host "Execute o comando mostrado acima e tente novamente." -ForegroundColor Yellow
+            Read-Host "Pressione Enter para sair"
+            exit
+        }
+    }
+}
+
+# Executa a verificacao de politica
+Check-ExecutionPolicy
+
+# --- VERIFICACAO DE PRIVILEGIOS DE ADMINISTRADOR ---
+function Check-AdminRights {
+    $currentUser = [Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object Security.Principal.WindowsPrincipal($currentUser)
+    $isAdmin = $principal.IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
+    
+    if (-not $isAdmin) {
+        Write-Host "==========================================" -ForegroundColor Red
+        Write-Host "ERRO: Privilegios Insuficientes" -ForegroundColor Red
+        Write-Host "==========================================" -ForegroundColor Red
+        Write-Host "Este script precisa ser executado como ADMINISTRADOR." -ForegroundColor Yellow
+        Write-Host ""
+        Write-Host "Como executar como Administrador:" -ForegroundColor White
+        Write-Host "1. Feche este PowerShell" -ForegroundColor White
+        Write-Host "2. Clique com botao direito no PowerShell" -ForegroundColor White
+        Write-Host "3. Selecione 'Executar como administrador'" -ForegroundColor White
+        Write-Host "4. Execute o script novamente" -ForegroundColor White
+        Write-Host "==========================================" -ForegroundColor Red
+        Read-Host "Pressione Enter para sair"
+        exit
+    }
+}
+
+# Executa a verificacao de privilegios
+Check-AdminRights
+
 # --- FUNCAO PARA CARREGAR CONFIGURACOES DO ARQUIVO .ENV ---
 function Load-EnvFile {
     param(

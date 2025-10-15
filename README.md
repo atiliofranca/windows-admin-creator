@@ -10,7 +10,7 @@ Script PowerShell para criar usuários administradores locais no Windows e envia
 
 ## 🚀 Como usar
 
-### 1. Configuração inicial
+### 1. Configuração inicial (apenas na primeira vez)
 
 1. Copie o arquivo `.env.example` para `.env`:
 
@@ -28,10 +28,52 @@ Script PowerShell para criar usuários administradores locais no Windows e envia
 
 ### 2. Executando o script
 
-1. Abra PowerShell como **Administrador**
-2. Navegue até a pasta do script
-3. Execute: `.\CriarAdmin.ps1`
-4. Siga as instruções na tela
+1. **Abra PowerShell como Administrador**
+2. **Navegue até a pasta do script:**
+   ```powershell
+   cd "c:\nome-da-pasta\windows-admin-creator"
+   ```
+3. **Execute o script:**
+   ```powershell
+   .\CriarAdmin.ps1
+   ```
+4. **Siga as instruções na tela**
+
+## 🔧 Solução de Problemas
+
+### ❌ Erro: "a execução de scripts foi desabilitada neste sistema"
+
+**Solução:** Execute este comando no PowerShell como Administrador:
+
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process
+```
+
+> Este comando afeta APENAS a sessão atual. Quando fechar o PowerShell, volta ao normal.
+
+### ❌ Erro: "Arquivo .env não encontrado"
+
+**Solução:**
+
+1. Certifique-se de estar na pasta correta do script
+2. Copie o arquivo `.env.example` para `.env`:
+   ```powershell
+   Copy-Item .env.example .env
+   ```
+3. Configure o arquivo `.env` com suas credenciais
+
+### ❌ Erro no envio de email
+
+**Solução:**
+
+1. Verifique as configurações SMTP no arquivo `.env`
+2. Teste se o servidor SMTP está acessível
+3. Verifique se a senha do email está correta
+4. Para Gmail/Outlook, use senhas de aplicativo
+
+### ❌ Erro: "O usuário já existe"
+
+**Solução:** O usuário com esse número já foi criado anteriormente. Use um número diferente.
 
 ## 🔒 Segurança
 
