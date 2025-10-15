@@ -21,25 +21,9 @@ function Check-ExecutionPolicy {
         Write-Host "- E temporario e seguro" -ForegroundColor White
         Write-Host "- Volta ao normal quando fechar o PowerShell" -ForegroundColor White
         Write-Host "==========================================" -ForegroundColor Yellow
-        
-        $resposta = Read-Host "Deseja que eu tente alterar automaticamente? (S/N)"
-        if ($resposta -match "^[SsYy]") {
-            try {
-                Set-ExecutionPolicy -ExecutionPolicy Unrestricted -Scope Process -Force
-                Write-Host "Politica alterada com sucesso!" -ForegroundColor Green
-                Write-Host "Continuando execucao do script..." -ForegroundColor Green
-                Start-Sleep -Seconds 2
-            } catch {
-                Write-Host "Erro ao alterar politica: $($_.Exception.Message)" -ForegroundColor Red
-                Write-Host "Execute manualmente o comando mostrado acima." -ForegroundColor Yellow
-                Read-Host "Pressione Enter para sair"
-                exit
-            }
-        } else {
-            Write-Host "Execute o comando mostrado acima e tente novamente." -ForegroundColor Yellow
-            Read-Host "Pressione Enter para sair"
-            exit
-        }
+        Write-Host "Execute o comando mostrado acima e tente novamente." -ForegroundColor Yellow
+        Read-Host "Pressione Enter para sair"
+        exit
     }
 }
 

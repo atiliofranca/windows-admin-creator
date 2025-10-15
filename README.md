@@ -31,13 +31,14 @@ Script PowerShell para criar usuários administradores locais no Windows e envia
 1. **Abra PowerShell como Administrador**
 2. **Navegue até a pasta do script:**
    ```powershell
-   cd "c:\nome-da-pasta\windows-admin-creator"
+   cd "c:\windows-admin-creator"
    ```
 3. **Execute o script:**
    ```powershell
    .\CriarAdmin.ps1
    ```
-4. **Siga as instruções na tela**
+4. **Se necessário, ajuste a política de execução (ver Solução de Problemas)**
+5. **Siga as instruções na tela**
 
 ## 🔧 Solução de Problemas
 
