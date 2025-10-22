@@ -155,57 +155,28 @@ Data de criacao do usuario admin: $dataCriacao
 Guarde esta senha em um local seguro.
 "@
     
-    # Agrupa os destinatarios
-    $destinatarios = @($emailDestinatario, $emailDestinatario2)
+
+    # Agrupa apenas destinatários válidos (não vazios/nulos)
+    $destinatarios = @()
+    if ($emailDestinatario -and $emailDestinatario.Trim() -ne "") {
+        $destinatarios += $emailDestinatario.Trim()
+    }
+    if ($emailDestinatario2 -and $emailDestinatario2.Trim() -ne "") {
+        $destinatarios += $emailDestinatario2.Trim()
+    }
+
+    if ($destinatarios.Count -eq 0) {
+        throw "Nenhum destinatário de e-mail válido foi encontrado. Verifique as variáveis EMAIL_DESTINATARIO e EMAIL_DESTINATARIO2 no arquivo .env."
+    }
 
     # Tenta enviar o e-mail
     Send-MailMessage -From $emailRemetente -To $destinatarios -Subject $emailAssunto -Body $emailCorpo -SmtpServer $smtpServer -Port $smtpPort -UseSsl -Credential $credencial
-        
+
     Write-Host "--------------------------------------------------" -ForegroundColor Yellow
     Write-Host "PROCESSO CONCLUIDO COM SUCESSO!" -ForegroundColor Green
     Write-Host "Usuario '$username' foi criado e a senha foi enviada para $($destinatarios -join ', ')."
     Write-Host "Assunto do e-mail: '$emailAssunto'"
     Write-Host "--------------------------------------------------" -ForegroundColor Yellow
-
-    # --- OPCAO PARA ALTERAR CONTA ATUAL PARA PADRAO ---
-    Write-Host ""
-    Write-Host "==========================================" -ForegroundColor Cyan
-    Write-Host "OPCAO: Alterar conta atual para Padrao" -ForegroundColor Cyan
-    Write-Host "==========================================" -ForegroundColor Cyan
-    
-    # Obtem o usuario atual
-    $usuarioAtual = $env:USERNAME
-    Write-Host "Usuario atual: $usuarioAtual" -ForegroundColor White
-    
-    # Verifica se o usuario atual e administrador
-    try {
-        $isCurrentUserAdmin = (Get-LocalGroupMember -Group "Administradores" | Where-Object { $_.Name -like "*$usuarioAtual" }) -ne $null
-        
-        if ($isCurrentUserAdmin) {
-            Write-Host "Tipo atual: Administrador" -ForegroundColor Yellow
-            Write-Host ""
-            $resposta = Read-Host "Deseja alterar a conta '$usuarioAtual' de Administrador para Padrao? (S/N)"
-            
-            if ($resposta -match "^[SsYy]") {
-                try {
-                    Remove-LocalGroupMember -Group "Administradores" -Member $usuarioAtual
-                    Write-Host "SUCESSO: Conta '$usuarioAtual' alterada para tipo Padrao!" -ForegroundColor Green
-                    Write-Host "IMPORTANTE: Esta alteracao tera efeito apos fazer logout/login." -ForegroundColor Yellow
-                } catch {
-                    Write-Host "ERRO ao alterar tipo de conta: $($_.Exception.Message)" -ForegroundColor Red
-                }
-            } else {
-                Write-Host "Tipo de conta nao alterado." -ForegroundColor White
-            }
-        } else {
-            Write-Host "Tipo atual: Padrao" -ForegroundColor Green
-            Write-Host "A conta '$usuarioAtual' ja e uma conta Padrao." -ForegroundColor White
-        }
-    } catch {
-        Write-Host "ERRO ao verificar tipo de conta: $($_.Exception.Message)" -ForegroundColor Red
-    }
-    
-    Write-Host "==========================================" -ForegroundColor Cyan
 
 } catch {
     # Captura e exibe erros
